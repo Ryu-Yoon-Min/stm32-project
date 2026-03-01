@@ -124,12 +124,12 @@ int main(void)
 		  current_temp = getCurrentTemper();
 		  last_tick = HAL_GetTick();
 
-		  if((int)(current_temp * 10) >= 300 && getHeaterState() == true)
+		  if((int)(current_temp * 10) >= 500 && getHeaterState() == true)
 		  {
 			  heaterController(t_OFF);
 		  }
 
-		  if((int)(current_temp * 10) < 300 && getHeaterState() == false)
+		  if((int)(current_temp * 10) < 500 && getHeaterState() == false)
 		  {
 			  heaterController(t_ON);
 		  }
@@ -325,3 +325,4 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
