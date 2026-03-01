@@ -1,0 +1,16 @@
+# Build Artifacts
+Debug/
+Release/
+*.o
+*.d
+*.elf
+*.map
+*.hex
+*.bin
+*.list
+*.su
+
+# IDE and OS files
+.settings/
+.DS_Store
+Thumbs.db
