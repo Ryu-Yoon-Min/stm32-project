@@ -9,6 +9,18 @@ STM32F103C8T6 보드를 기반으로 제작된 자동 고추 건조기 제어 �
 
 ---
 
+## Project Status
+
+| Area | Status | Evidence |
+| :--- | :--- | :--- |
+| DS18B20 온도 센서 통합 | Completed | `Core/Lib/Src/ds18b20.c`, `Core/Lib/Src/onewire.c` |
+| 50.0°C 기준 릴레이 제어 | Completed | `Core/Src/main.c`, `Core/Src/heaterController.c` |
+| FND 표시 | Completed, main-loop based | `Core/Src/fnd_controller.c` |
+| FND flickering 개선 | Planned | TIM3 interrupt 기반 refresh 구조로 개선 예정 |
+| Overshoot 완화 | Planned | Hysteresis 또는 PID 제어 검토 예정 |
+
+---
+
 ## 1. 데모 및 동작 사진 (Demo / Screenshots)
 소리 필수
 
