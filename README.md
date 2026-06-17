@@ -99,8 +99,3 @@ https://github.com/user-attachments/assets/3ec0a47a-daf2-4ed5-bfcd-c123cee26c76
 
 [ ] 오버슈트(Overshoot) 방지 로직 도입:
 현재는 50°C 도달 시 즉시 히터가 꺼지지만, 잔열로 인해 온도가 목표치를 한참 웃도는 현상이 발생합니다. 50°C 부근에서 전원을 미리 차단하거나 PID/Hysteresis 제어를 도입하여 온도를 더 정확하게 유지하도록 개선할 예정입니다
-
-## 9. 작성자 및 라이선스 (Author & License)
-Author: Ryu-Yoon-Min
-
-License: 이 프로젝트는 MIT License를 따릅니다.
