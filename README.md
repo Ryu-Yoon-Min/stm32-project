@@ -22,8 +22,7 @@ STM32F103C8T6 보드를 기반으로 제작된 자동 고추 건조기 제어 �
 ---
 
 ## 1. 데모 및 동작 사진 (Demo / Screenshots)
-소리 필수
-
+Demo video with relay switching sound
 
 
 
@@ -48,8 +47,6 @@ https://github.com/user-attachments/assets/3ec0a47a-daf2-4ed5-bfcd-c123cee26c76
 * **액추에이터**: 1 Channel 5V/12V Relay Module (히터 전원 제어용)
 
 ---
-
-## 4. 핀 맵 및 배선 (Pin Map / Wiring)
 
 ## 4. 핀 맵 및 배선 (Pin Map / Wiring)
 
@@ -86,16 +83,15 @@ https://github.com/user-attachments/assets/3ec0a47a-daf2-4ed5-bfcd-c123cee26c76
 ## 7. 빌드 및 실행 방법 (How to Build & Flash)
 
 1. 이 저장소를 로컬 PC로 클론합니다.
-   ```bash
-   git clone [https://github.com/Ryu-Yoon-Min/hot_pepper_drier.git](https://github.com/Ryu-Yoon-Min/hot_pepper_drier.git)
-   ```
-2. STM32CubeIDE를 실행하고, File > Open Projects from File System...을 통해 클론한 폴더를 Import 합니다.
+   - git clone [https://github.com/Ryu-Yoon-Min/stm32-project.git]
+   
+3. STM32CubeIDE를 실행하고, File > Open Projects from File System...을 통해 클론한 폴더를 Import 합니다.
 
-3. 상단 메뉴의 망치 아이콘(Build)을 눌러 프로젝트를 컴파일합니다.
+4. 상단 메뉴의 망치 아이콘(Build)을 눌러 프로젝트를 컴파일합니다.
 
-4. ST-Link 등 디버거를 PC와 타겟 보드에 연결합니다.
+5. ST-Link 등 디버거를 PC와 타겟 보드에 연결합니다.
 
-5. 상단 메뉴의 벌레 아이콘(Debug) 또는 재생 아이콘(Run)을 눌러 펌웨어를 보드에 다운로드하고 실행합니다.
+6. 상단 메뉴의 벌레 아이콘(Debug) 또는 재생 아이콘(Run)을 눌러 펌웨어를 보드에 다운로드하고 실행합니다.
 
 ## 8. 향후 개선 사항 (To-Do / Future Works)
 [ ] FND 디스플레이 구조 개선 (Flickering 이슈 해결):
