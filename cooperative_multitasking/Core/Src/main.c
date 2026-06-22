@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "fnd_controller.h"
+#include "heaterController.h"
 #include "ds18b20.h"
 /* USER CODE END Includes */
 
@@ -58,7 +59,6 @@ static void MX_TIM3_Init(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
-
 /* USER CODE BEGIN 0 */
 //int _write(int file, char * p, int len){
 //	HAL_UART_Transmit(&huart1, (uint8_t *)p, len, 10);
@@ -108,10 +108,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  if (Ds18b20_ManualConvert())
-	  {
-		  displayTempX10 = (int)(temperSensor->Temperature * 10);
+	  if (Ds18b20_ManualConvert()){ displayTempX10 = (int)(temperSensor->Temperature * 10);}
+
+	  if(displayTempX10 > 500 && getHeaterState() == t_ON){
+		  heaterController(t_OFF);
+	  } else if(displayTempX10 < 450 && getHeaterState() == t_OFF){
+		  heaterController(t_ON);
 	  }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -119,7 +123,6 @@ int main(void)
   /* USER CODE END 3 */
   }
 }
-
 /**
   * @brief System Clock Configuration
   * @retval None
@@ -267,7 +270,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, FND_SCLK_Pin|FND_RCLK_Pin|FND_DIO_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, FND_SCLK_Pin|FND_RCLK_Pin|FND_DIO_Pin|RELAY_ON_OFF_CTRL_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin : PA3_TEMP_DATA_Pin */
   GPIO_InitStruct.Pin = PA3_TEMP_DATA_Pin;
@@ -281,6 +284,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : RELAY_ON_OFF_CTRL_Pin */
+  GPIO_InitStruct.Pin = RELAY_ON_OFF_CTRL_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(RELAY_ON_OFF_CTRL_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
