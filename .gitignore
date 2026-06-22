@@ -12,5 +12,7 @@ Release/
 
 # IDE and OS files
 .settings/
+.metadata/
+*.launch
 .DS_Store
 Thumbs.db

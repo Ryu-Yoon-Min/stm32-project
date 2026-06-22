@@ -1,11 +1,25 @@
-# STM32 Pepper Dryer Controller 🌶️
+# STM32 Pepper Dryer Controller
 
 ![C](https://img.shields.io/badge/Language-C-blue.svg)
+![MCU](https://img.shields.io/badge/MCU-STM32F103C8T6-03234B.svg)
 ![IDE](https://img.shields.io/badge/IDE-STM32CubeIDE-03234B.svg)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
-STM32F103C8T6 보드를 기반으로 제작된 자동 고추 건조기 제어 시스템입니다. 
-지정된 온도(50.0°C)를 유지하기 위해 실시간으로 온도를 측정하고 릴레이를 통해 히터를 제어합니다.
+STM32F103C8T6 보드를 기반으로 제작한 고추 건조기 제어 및 임베디드 타이밍 실험 프로젝트입니다.
+
+초기 프로젝트는 DS18B20 온도 센서로 현재 온도를 측정하고, 목표 온도 기준으로 릴레이를 제어하여 히터의 ON/OFF를 결정하는 자동 건조기 제어 시스템으로 시작했습니다. 이후 `cooperative_multitasking/` 디렉터리에서 DS18B20 온도 측정과 4-Digit FND 표시를 분리하는 구조를 실험했고, TIM3 timer interrupt 기반의 비동기 FND refresh 방식으로 기존 FND flickering 문제를 해결했습니다.
+
+이 저장소는 단순 동작 구현보다 **문제 정의 -> 원인 분석 -> 구조 개선 -> 동작 검증**의 흐름을 보여주는 것을 목표로 합니다. 특히 대학원 연구실 지원 포트폴리오 관점에서, 센서 기반 embedded control system, timing-sensitive peripheral 제어, interrupt 기반 비동기 구조 설계 경험을 정리했습니다.
+
+---
+
+## Repository Layout
+
+| Path | Description |
+| :--- | :--- |
+| `Core/`, `Drivers/`, `hot_pepper_drier.ioc` | 기존 고추 건조기 제어 프로젝트 |
+| `cooperative_multitasking/` | DS18B20 + FND 비동기 refresh 구조를 검증한 신규 STM32CubeIDE 프로젝트 |
+| `docs/media/cooperative_multitasking_fnd_demo.mov` | FND flickering 개선 후 동작 검증 영상 |
 
 ---
 
@@ -13,89 +27,318 @@ STM32F103C8T6 보드를 기반으로 제작된 자동 고추 건조기 제어 �
 
 | Area | Status | Evidence |
 | :--- | :--- | :--- |
-| DS18B20 온도 센서 통합 | Completed | `Core/Lib/Src/ds18b20.c`, `Core/Lib/Src/onewire.c` |
-| 50.0°C 기준 릴레이 제어 | Completed | `Core/Src/main.c`, `Core/Src/heaterController.c` |
-| FND 표시 | Completed, main-loop based | `Core/Src/fnd_controller.c` |
-| FND flickering 개선 | Planned | TIM3 interrupt 기반 refresh 구조로 개선 예정 |
+| DS18B20 온도 센서 통합 | Completed | `cooperative_multitasking/Core/Src/ds18b20.c`, `cooperative_multitasking/Core/Src/onewire.c` |
+| OneWire 기반 온도 측정 | Completed | `Ds18b20_ManualConvert()` |
+| FND 온도 표시 | Completed | `cooperative_multitasking/Core/Src/fnd_controller.c` |
+| FND flickering 개선 | Resolved | `digit4_temper_scan()`, `HAL_TIM_PeriodElapsedCallback()` |
+| 50.0°C 기준 릴레이 제어 | Completed in original project | `Core/Src/main.c`, `Core/Src/heaterController.c` |
 | Overshoot 완화 | Planned | Hysteresis 또는 PID 제어 검토 예정 |
 
 ---
 
-## 1. 데모 및 동작 사진 (Demo / Screenshots)
-Demo video with relay switching sound
+## Demo
 
-
+### Relay Switching Demo
 
 https://github.com/user-attachments/assets/3ec0a47a-daf2-4ed5-bfcd-c123cee26c76
 
+### FND Flickering Fix Demo
+
+The updated FND refresh behavior is recorded here:
+
+[cooperative_multitasking_fnd_demo.mov](docs/media/cooperative_multitasking_fnd_demo.mov)
 
 ---
 
-## 2. 핵심 기능 (Key Features)
+## Key Features
 
-* **자동 온도 조절 로직**: 현재 온도를 측정하여 50.0°C를 기준으로 릴레이(히터) ON/OFF 자동 제어.
-* **실시간 온도 모니터링**: 4-Digit FND(7-Segment)를 활용하여 현재 온도를 소수점 첫째 자리까지 실시간 표출.
-* **OneWire 프로토콜 통신**: DS18B20 센서와 통신하여 노이즈에 강한 디지털 온도 데이터 수집.
+- **자동 온도 조절 로직**
+  - DS18B20으로 현재 온도를 측정합니다.
+  - 목표 온도 50.0°C를 기준으로 릴레이를 제어합니다.
+
+- **OneWire 프로토콜 기반 센서 통신**
+  - DS18B20의 reset, presence pulse, read/write slot timing을 직접 다룹니다.
+  - microsecond 단위 timing을 위해 TIM2 기반 delay를 사용합니다.
+
+- **4-Digit FND 온도 표시**
+  - 현재 온도를 소수점 첫째 자리까지 표시합니다.
+  - 예: `57.6°C`
+
+- **TIM3 인터럽트 기반 비동기 FND refresh**
+  - 기존 blocking 표시 방식에서 발생하던 FND flickering 문제를 해결했습니다.
+  - main loop는 온도 측정과 제어 판단을 담당하고, TIM3 interrupt는 FND 한 자리 refresh만 담당합니다.
 
 ---
 
-## 3. 하드웨어 스펙 및 구성 (Hardware Prerequisites)
+## Hardware
 
-* **MCU**: STM32F103C8T6 (ARM Cortex-M3)
-* **온도 센서**: DS18B20 (OneWire Interface)
-* **디스플레이**: 4-Digit 7-Segment (FND) + 74HC595D (Shift Register)
-* **액추에이터**: 1 Channel 5V/12V Relay Module (히터 전원 제어용)
+| Module | Description |
+| :--- | :--- |
+| MCU | STM32F103C8T6, ARM Cortex-M3 |
+| Temperature Sensor | DS18B20, OneWire Interface |
+| Display | 4-Digit 7-Segment FND |
+| Shift Register | 74HC595D |
+| Actuator | 1 Channel Relay Module |
+| Load | Heater for pepper dryer prototype |
 
 ---
 
-## 4. 핀 맵 및 배선 (Pin Map / Wiring)
+## Pin Map
 
-| 모듈 (Module) | 핀 역할 (Function) | STM32F103C8T6 핀 | 방향 (I/O) | 비고 |
+### `cooperative_multitasking/`
+
+| Module | Function | STM32F103C8T6 Pin | Direction | Note |
 | :--- | :--- | :--- | :--- | :--- |
-| **DS18B20** (온도 센서) | DATA | **PA3** | In/Out | OneWire 데이터 통신 라인 |
-| **FND (74HC595D)** | RCLK (Latch) | **PB13** | Output | 디스플레이 출력 래치 클럭 |
-| **FND (74HC595D)** | DIO (Data) | **PB14** | Output | 디스플레이 직렬 데이터 입력 |
-| **FND (74HC595D)** | SCLK (Shift) | **PB15** | Output | 디스플레이 시프트 클럭 |
-| **Relay Module** | IN (제어 신호) | **PB5** | Output | 히터 전원 ON/OFF 제어 출력 |
+| DS18B20 | DATA | PA3 | In/Out | OneWire data line |
+| FND / 74HC595D | SCLK | PB13 | Output | Shift clock |
+| FND / 74HC595D | RCLK | PB14 | Output | Latch clock |
+| FND / 74HC595D | DIO | PB15 | Output | Serial data |
+
+### Original Dryer Controller
+
+| Module | Function | STM32F103C8T6 Pin | Direction | Note |
+| :--- | :--- | :--- | :--- | :--- |
+| Relay Module | IN | PB5 | Output | Heater ON/OFF control |
 
 ---
 
-## 5. 개발 환경 (Software & Tools)
+## Software Architecture
 
-* **IDE**: STM32CubeIDE (Version 1.19.0)
-* **Firmware Package**: STM32Cube FW_F1 V1.8.6
-* **Toolchain**: GNU ARM Embedded Toolchain
-* **Libraries**: HAL Driver API 사용
+### Main Loop
+
+The main loop performs DS18B20 temperature conversion and updates a shared display value.
+
+```c
+while (1)
+{
+  if (Ds18b20_ManualConvert())
+  {
+    displayTempX10 = (int)(temperSensor->Temperature * 10);
+  }
+}
+```
+
+`displayTempX10` stores temperature as an integer scaled by 10.
+
+| Temperature | Stored Value |
+| :--- | :--- |
+| 25.3°C | 253 |
+| 50.0°C | 500 |
+| 57.6°C | 576 |
+
+This keeps floating-point calculation out of the timer interrupt path.
+
+### TIM3 Interrupt Callback
+
+TIM3 is configured as a periodic interrupt source. The HAL timer callback refreshes one FND digit on each interrupt.
+
+```c
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  if (htim->Instance == TIM3)
+  {
+    digit4_temper_scan(displayTempX10);
+  }
+}
+```
+
+`HAL_TIM_PeriodElapsedCallback()` is a predefined STM32 HAL callback. When `TIM3_IRQHandler()` calls `HAL_TIM_IRQHandler(&htim3)`, the HAL checks the timer update event, clears the interrupt flag, and calls this callback.
+
+### Non-Blocking FND Scan
+
+The previous function, `digit4_temper(temp, replay)`, refreshed all digits repeatedly inside a blocking loop. The improved function, `digit4_temper_scan()`, refreshes only one digit per call and returns immediately.
+
+```c
+void digit4_temper_scan(int n)
+{
+  static uint8_t pos = 0;
+
+  uint8_t seg = 0xFF;
+  uint8_t port = 1 << pos;
+
+  int n1 = n % 10;
+  int n2 = (n % 100) / 10;
+  int n3 = (n % 1000) / 100;
+  int n4 = (n % 10000) / 1000;
+
+  switch (pos)
+  {
+    case 0:
+      seg = _LED_0F[n1];
+      break;
+
+    case 1:
+      seg = _LED_0F[n2] & 0x7F;
+      break;
+
+    case 2:
+      if (n > 99)
+      {
+        seg = _LED_0F[n3];
+      }
+      break;
+
+    case 3:
+      if (n > 999)
+      {
+        seg = _LED_0F[n4];
+      }
+      break;
+  }
+
+  send_port(seg, port);
+
+  pos++;
+  if (pos >= 4)
+  {
+    pos = 0;
+  }
+}
+```
+
+For example, if the temperature is `57.6°C`, `displayTempX10` becomes `576`.
+
+| Interrupt Count | Displayed Digit |
+| :--- | :--- |
+| 1st | `6` |
+| 2nd | `7.` |
+| 3rd | `5` |
+| 4th | blank |
+| 5th | `6` |
+
+The full 4-digit display is refreshed fast enough that the human eye sees a stable `57.6`.
 
 ---
 
-## 6. 소프트웨어 아키텍처 및 동작 논리 (Software Flow)
+## Troubleshooting
 
-1. **초기화**: 시스템 클럭, GPIO, TIM2 타이머, FND, DS18B20 센서를 초기화합니다.
-2. **온도 갱신 (1초 주기)**: `HAL_GetTick()`을 사용하여 1초(1000ms)마다 DS18B20 센서에 온도 변환 명령(`Ds18b20_ManualConvert()`)을 내리고 값을 읽어옵니다.
-3. **히터 제어**: 
-   - 측정된 온도가 50.0°C 미만일 경우: 릴레이 모듈 제어 핀을 HIGH(또는 LOW)로 설정하여 히터 ON.
-   - 측정된 온도가 50.0°C 이상일 경우: 릴레이 제어 핀을 반전시켜 히터 OFF.
-4. **디스플레이 출력**: `digit4_temper()` 함수를 통해 메인 루프 내에서 FND 각 자리의 세그먼트를 순차적으로 점등하여 온도를 표시합니다.
+### FND Flickering Trouble - Resolved
+
+#### Symptom
+
+The FND display flickered whenever the main loop performed temperature measurement or other blocking work.
+
+The previous structure was:
+
+```c
+Ds18b20_ManualConvert();
+temp = (int)(temperSensor->Temperature * 10);
+digit4_temper(temp, 5000);
+```
+
+`digit4_temper()` was responsible for refreshing all FND digits repeatedly. Because it was called from the main loop, display refresh timing depended on how long the sensor/control logic took.
+
+#### Root Cause
+
+4-Digit FND displays use multiplexing. Each digit must be refreshed periodically and consistently.
+
+The previous architecture mixed two tasks with different timing requirements:
+
+```text
+Temperature conversion and control
+FND multiplex refresh
+```
+
+When DS18B20 conversion or other logic occupied the main loop, FND refresh timing became irregular, which caused flickering.
+
+#### Solution
+
+The FND refresh task was moved from the main loop to a TIM3 interrupt-driven scan routine.
+
+```text
+main loop
+  - DS18B20 temperature conversion
+  - heater control
+  - displayTempX10 update
+
+TIM3 interrupt
+  - refresh one FND digit
+```
+
+This separates slow sensor/control logic from the time-sensitive display refresh path.
+
+#### Result
+
+- FND refresh no longer depends on the main loop execution time.
+- The display is refreshed continuously by TIM3 interrupt.
+- `digit4_temper_scan()` performs a small bounded amount of work per interrupt.
+- The previous flickering issue was resolved.
+
+#### Engineering Takeaway
+
+This was not just a display bug. It was a scheduling problem caused by mixing a blocking control loop with a time-critical multiplexing task.
+
+The fix demonstrates:
+
+- separating tasks by timing requirements,
+- using timer interrupt callbacks for periodic refresh,
+- keeping ISR work short and deterministic,
+- sharing data between main loop and ISR through a `volatile` variable,
+- debugging embedded behavior from timing diagrams and observed symptoms.
 
 ---
 
-## 7. 빌드 및 실행 방법 (How to Build & Flash)
+## Build & Flash
 
-1. 이 저장소를 로컬 PC로 클론합니다.
-   - git clone [https://github.com/Ryu-Yoon-Min/stm32-project.git]
-   
-3. STM32CubeIDE를 실행하고, File > Open Projects from File System...을 통해 클론한 폴더를 Import 합니다.
+1. Clone this repository.
 
-4. 상단 메뉴의 망치 아이콘(Build)을 눌러 프로젝트를 컴파일합니다.
+```bash
+git clone https://github.com/Ryu-Yoon-Min/stm32-project.git
+```
 
-5. ST-Link 등 디버거를 PC와 타겟 보드에 연결합니다.
+2. Open STM32CubeIDE.
 
-6. 상단 메뉴의 벌레 아이콘(Debug) 또는 재생 아이콘(Run)을 눌러 펌웨어를 보드에 다운로드하고 실행합니다.
+3. Import either project.
 
-## 8. 향후 개선 사항 (To-Do / Future Works)
-[ ] FND 디스플레이 구조 개선 (Flickering 이슈 해결):
-현재 FND의 4자리 숫자를 표시할 때 메인 루프에서 Chip-Select 방식으로 딜레이를 주며 동작하여, 온도 측정 로직이 실행되는 1초마다 FND가 깜빡거리는 현상이 있습니다. 이를 타이머 인터럽트(Timer Interrupt) 기반의 백그라운드 스레드 방식으로 변경하여 깜빡임 없이 상시 점등되도록 구조를 개선할 예정입니다.
+```text
+File > Open Projects from File System...
+```
 
-[ ] 오버슈트(Overshoot) 방지 로직 도입:
-현재는 50°C 도달 시 즉시 히터가 꺼지지만, 잔열로 인해 온도가 목표치를 한참 웃도는 현상이 발생합니다. 50°C 부근에서 전원을 미리 차단하거나 PID/Hysteresis 제어를 도입하여 온도를 더 정확하게 유지하도록 개선할 예정입니다
+For the flickering-fix version, select:
+
+```text
+stm32-project/cooperative_multitasking
+```
+
+4. Build the project with the hammer icon.
+
+5. Connect ST-Link or another supported debugger.
+
+6. Flash and run the firmware with Debug or Run.
+
+---
+
+## Research-Oriented Notes
+
+This project is organized as a graduate-school portfolio artifact rather than a one-off demo. The important part is not only that the board works, but that the system-level problem was isolated and improved.
+
+The FND flickering issue provided a concrete embedded-systems debugging case:
+
+1. Observe unstable display behavior.
+2. Trace the behavior to blocking main-loop refresh.
+3. Identify display multiplexing as a periodic timing task.
+4. Move refresh into TIM3 interrupt.
+5. Keep sensor/control logic in the main loop.
+6. Verify stable FND behavior on hardware.
+
+This workflow is directly connected to research-oriented embedded development: timing analysis, hardware-software interaction, control-loop structure, and reliable system behavior under resource constraints.
+
+---
+
+## Future Works
+
+- [x] FND flickering 해결
+  - TIM3 timer interrupt 기반 refresh 구조 적용
+  - `digit4_temper_scan()`으로 한 자리씩 비동기 표시
+
+- [ ] 히터 overshoot 완화
+  - hysteresis 제어 적용
+  - 목표 온도 근처에서 선제적 heater OFF
+  - PID 제어 검토
+  - 온도 응답 곡선 기반 thermal model 분석
+
+---
+
+## License
+
+This project is licensed under the MIT License.
