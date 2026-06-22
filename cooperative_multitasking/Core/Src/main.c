@@ -22,7 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "fnd_controller.h"
-#include "heaterController.h"
+#include "heater_controller.h"
 #include "ds18b20.h"
 /* USER CODE END Includes */
 
