@@ -46,7 +46,7 @@ https://github.com/user-attachments/assets/3ec0a47a-daf2-4ed5-bfcd-c123cee26c76
 
 The updated FND refresh behavior is recorded here:
 
-[cooperative_multitasking_fnd_demo.mov](docs/media/cooperative_multitasking_fnd_demo.mov)
+https://github.com/user-attachments/assets/eac2c7af-5809-4692-aa8c-e0ef04f6da17
 
 ---
 
