@@ -39,6 +39,7 @@ STM32F103C8T6 보드를 기반으로 제작한 고추 건조기 제어 및 임�
 ## Demo
 
 ### Relay Switching Demo
+### 드라이기 소리를 통해 동작 확인 가능
 
 https://github.com/user-attachments/assets/3ec0a47a-daf2-4ed5-bfcd-c123cee26c76
 
