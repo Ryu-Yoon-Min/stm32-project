@@ -337,9 +337,3 @@ This workflow is directly connected to research-oriented embedded development: t
   - 목표 온도 근처에서 선제적 heater OFF
   - PID 제어 검토
   - 온도 응답 곡선 기반 thermal model 분석
-
----
-
-## License
-
-This project is licensed under the MIT License.
