@@ -17,8 +17,8 @@ STM32F103C8T6 보드를 기반으로 제작한 고추 건조기 제어 및 임�
 
 | 디렉터리 (Path) | 설명 (Description) |
 | :--- | :--- |
-| **[📁 01_legacy_blocking_fnd](./01_legacy_blocking_fnd)** | **[Version 1]** 메인 루프 기반 동기식 제어 버전. DS18B20 온도 측정과 FND 표시가 메인 루프에서 혼재되어 **디스플레이 깜빡임(Flickering) 문제**가 존재하는 초기 릴레이 제어 모델입니다. |
-| **[📁 02_cooperative_multitasking](./02_cooperative_multitasking)** | **[Version 2]** 하드웨어 타이머(TIM3) 인터럽트를 도입하여 DS18B20 통신 태스크와 FND 스캔 태스크를 분리한 최적화 버전입니다. **플리커링 문제를 완벽히 해결한 논블로킹(Non-blocking) 아키텍처의 핵심 상세 내용이 포함되어 있습니다.** |
+| **[📁 01_legacy_blocking_fnd](./01_legacy_blocking_fnd)** | **[Version 1]** 메인 루프 기반 동기식 제어 버전. DS18B20 온도 측정과 FND 표시가 메인 루프에서 혼재되어 **디스플레이 깜빡임(Flickering) 문제**가 존재하는 초기 릴레이 제어 모델. |
+| **[📁 02_cooperative_multitasking](./02_cooperative_multitasking)** | **[Version 2]** 하드웨어 타이머(TIM3) 인터럽트를 도입하여 DS18B20 통신 태스크와 FND 스캔 태스크를 분리한 최적화 버전. **플리커링 문제를 완벽히 해결한 논블로킹(Non-blocking) 아키텍처의 핵심 상세 내용이 포함되어 있습니다.** |
 
 ---
 
@@ -36,15 +36,16 @@ STM32F103C8T6 보드를 기반으로 제작한 고추 건조기 제어 및 임�
 
 ## 🎥 Demo & Video
 
-### 1. FND Flickering Fix Demo (플리커링 개선 결과)
-메인 루프 블로킹 현상으로 인해 디스플레이가 떨리던 V1과 달리, 인터럽트 기반 비동기 처리(V2)를 통해 센서 통신 중에도 화면 흔들림 없이 실시간 온도를 안정적으로 표출합니다.
-
-https://github.com/user-attachments/assets/eac2c7af-5809-4692-aa8c-e0ef04f6da17
-
-### 2. Relay Switching Demo (자동 온도 제어 시연)
+### [Version 1]. Relay Switching Demo (자동 온도 제어 시연)
 목표 온도(50.0°C)를 기준으로 릴레이가 스위칭되며 히터(드라이기) 전원을 제어하는 동작을 소리로 확인할 수 있습니다.
 
 https://github.com/user-attachments/assets/3ec0a47a-daf2-4ed5-bfcd-c123cee26c76
+
+### [Version 2]. FND Flickering Fix Demo (플리커링 개선 결과)
+메인 루프 블로킹 현상으로 인해 디스플레이가 불안정하던 V1과 달리, 인터럽트 기반 비동기 처리(V2)를 통해 센서 통신 중에도 화면 흔들림 없이 실시간 온도를 안정적으로 표출합니다.
+
+https://github.com/user-attachments/assets/eac2c7af-5809-4692-aa8c-e0ef04f6da17
+
 
 ---
 
