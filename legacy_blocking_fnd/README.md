@@ -1,4 +1,4 @@
-# STM32 Pepper Dryer Controller 🌶️
+# STM32 Pepper Dryer Controller
 
 ![C](https://img.shields.io/badge/Language-C-blue.svg)
 ![IDE](https://img.shields.io/badge/IDE-STM32CubeIDE-03234B.svg)
