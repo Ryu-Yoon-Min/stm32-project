@@ -62,7 +62,6 @@ https://github.com/user-attachments/assets/eac2c7af-5809-4692-aa8c-e0ef04f6da17
 ## 🚀 향후 개선 사항 (Future Works)
 
 - [x] **FND flickering 해결 완료**: 다이나믹 구동 한계 극복 및 TIM3 인터럽트 기반 비동기 스캔 적용
-- [ ] **히터 Overshoot 완화 계획**: 
+- [x] **히터 Overshoot 완화 계획**: 
   - Hysteresis 제어 적용
   - 목표 온도 근처에서 선제적 Heater OFF 로직 구현
-  - PID 제어 도입 및 온도 응답 곡선 기반 Thermal Model 분석 검토
