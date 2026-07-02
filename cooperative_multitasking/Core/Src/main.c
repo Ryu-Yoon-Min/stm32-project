@@ -302,7 +302,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
   if (htim->Instance == TIM3)
   {
-    digit4_temper_scan(displayTempX10);
+  	if (!isBusy())
+    {
+      digit4_temper_scan(displayTempX10);
+    }
   }
 }
 /* USER CODE END 4 */
