@@ -37,7 +37,7 @@ STM32F103C8T6 보드를 기반으로 제작한 고추 건조기 제어 및 임�
 ## 🎥 Demo & Video
 
 ### [Version 1]. Relay Switching Demo (자동 온도 제어 시연)
-목표 온도(50.0°C)를 기준으로 릴레이가 스위칭되며 히터(드라이기) 전원을 제어하는 동작을 소리로 확인할 수 있습니다.
+목표 온도(50.0°C 초과 / 45°C 미만)를 기준으로 릴레이가 스위칭되며 히터(드라이기) 전원을 제어하는 동작을 소리로 확인할 수 있습니다.
 
 https://github.com/user-attachments/assets/3ec0a47a-daf2-4ed5-bfcd-c123cee26c76
 
