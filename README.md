@@ -18,7 +18,7 @@ STM32F103C8T6 보드를 기반으로 제작한 고추 건조기 제어 및 임�
 | 디렉터리 (Path) | 설명 (Description) |
 | :--- | :--- |
 | **[📁 Version1_legacy_blocking_fnd](./legacy_blocking_fnd)** | **[Version 1]** 메인 루프 기반 동기식 제어 버전. DS18B20 온도 측정과 FND 표시가 메인 루프에서 혼재되어 **디스플레이 깜빡임(Flickering) 문제**가 존재하는 초기 릴레이 제어 모델. |
-| **[📁 Version2_cooperative_multitasking](./cooperative_multitasking)** | **[Version 2]** 하드웨어 타이머(TIM3) 인터럽트를 도입하여 DS18B20 통신 태스크와 FND 스캔 태스크를 분리한 최적화 버전. **플리커링 문제를 완벽히 해결한 논블로킹(Non-blocking) 아키텍처의 핵심 상세 내용이 포함되어 있습니다.** |
+| **[📁 Version2_cooperative_multitasking](./cooperative_multitasking)** | **[Version 2]** 하드웨어 타이머(TIM3) 인터럽트를 도입하여 DS18B20 통신 태스크와 FND 스캔 태스크를 분리한 최적화 버전. **플리커링 문제를 해결한 논블로킹(Non-blocking) 아키텍처의 핵심 상세 내용이 포함되어 있습니다.** |
 
 ---
 
