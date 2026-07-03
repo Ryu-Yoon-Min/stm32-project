@@ -20,7 +20,7 @@
 #include "ds18b20Config.h"
 //#include "tim.h"
 
-uint8_t  m_busy_line = 0;
+volatile uint8_t  m_busy_line = 0;
 
 uint8_t isBusyLine(void){
 	return  m_busy_line;
