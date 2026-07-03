@@ -63,7 +63,7 @@ void OneWire_SelectWithPointer(OneWire_t* OneWireStruct, uint8_t* ROM);
 uint8_t OneWire_CRC8(uint8_t* addr, uint8_t len);
 
 uint8_t isBusyLine(void);
-extern uint8_t  m_busy_line;
+extern volatile uint8_t  m_busy_line;
 //#######################################################################################################
  
 /* C++ detection */
